@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsup",
+		"dev": "tsup --watch",
 		"start": "node cli.mjs",
 		"check": "tsc --noEmit",
 		"release": "pnpm run build && changeset publish"
@@ -31,5 +32,6 @@
 		"git-worktree"
 	],
 	"author": "thenbe",
-	"license": "MIT"
+	"license": "MIT",
+	"private": false
 }

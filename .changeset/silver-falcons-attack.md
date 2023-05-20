@@ -1,5 +1,5 @@
 ---
-"worktree-welder": patch
+'worktree-welder': patch
 ---
 
-initial release
+Initial release
