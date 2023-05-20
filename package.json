@@ -25,6 +25,12 @@
 		"tsup": "6.7.0",
 		"typescript": "^5.0.4"
 	},
+	"homepage": "https://github.com/thenbe/worktree-welder#readme",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/thenbe/worktree-welder.git"
+	},
+	"bugs": "https://github.com/thenbe/worktree-welder/issues",
 	"keywords": [
 		"git",
 		"worktree",
