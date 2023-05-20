@@ -1,0 +1,12 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": [
+		"@tsconfig/strictest/tsconfig",
+		"@tsconfig/node18/tsconfig",
+		"@tsconfig/esm/tsconfig"
+	],
+	"compilerOptions": {
+		"noPropertyAccessFromIndexSignature": false
+	},
+	"include": ["src/**/*.ts"]
+}
