@@ -7,6 +7,7 @@
 	"scripts": {
 		"build": "tsup",
 		"start": "node cli.mjs",
+		"check": "tsc --noEmit",
 		"release": "pnpm run build && changeset publish"
 	},
 	"dependencies": {
