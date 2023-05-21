@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@clack/prompts':
-    specifier: ^0.2.0
-    version: 0.2.0
+    specifier: ^0.6.3
+    version: 0.6.3
   execa:
     specifier: ^7.1.1
     version: 7.1.1
@@ -248,21 +248,22 @@ packages:
       prettier: 2.8.8
     dev: true
 
-  /@clack/core@0.1.9:
-    resolution: {integrity: sha512-2VaGLFQq54lGkpc48ZsPK8LzbQCbu5I+7zAFrvKM9PTCMI3Lzut+Q8LnflyRLeAsjqzvc5o258+nAoAiRWC0jA==}
+  /@clack/core@0.3.2:
+    resolution: {integrity: sha512-FZnsNynwGDIDktx6PEZK1EuCkFpY4ldEX6VYvfl0dqeoLPb9Jpw1xoUXaVcGR8ExmYNm1w2vdGdJkEUYD/2pqg==}
     dependencies:
       picocolors: 1.0.0
       sisteransi: 1.0.5
     dev: false
 
-  /@clack/prompts@0.2.0:
-    resolution: {integrity: sha512-2/z+ggir05igkE1BWReiamGEWDi7oklR6/rURbaWhWTMHiJkqmMhza1eilAtMeg+ALnX16msDfK8IMVeW0LGTg==}
+  /@clack/prompts@0.6.3:
+    resolution: {integrity: sha512-AM+kFmAHawpUQv2q9+mcB6jLKxXGjgu/r2EQjEwujgpCdzrST6BJqYw00GRn56/L/Izw5U7ImoLmy00X/r80Pw==}
     dependencies:
-      '@clack/core': 0.1.9
-      ansi-regex: 6.0.1
+      '@clack/core': 0.3.2
       picocolors: 1.0.0
       sisteransi: 1.0.5
     dev: false
+    bundledDependencies:
+      - is-unicode-supported
 
   /@esbuild/android-arm64@0.17.19:
     resolution: {integrity: sha512-KBMWvEZooR7+kzY0BtbTQn0OAYY7CsiydT63pVEaPtVYF0hXbUaOyZog37DKxK7NF3XacBJOpYT4adIJh+avxA==}
@@ -584,11 +585,6 @@ packages:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
     dev: true
-
-  /ansi-regex@6.0.1:
-    resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
-    engines: {node: '>=12'}
-    dev: false
 
   /ansi-styles@3.2.1:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}
