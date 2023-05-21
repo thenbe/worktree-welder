@@ -2,23 +2,33 @@ import { cancel, intro, isCancel, outro, select } from '@clack/prompts';
 import { execa } from 'execa';
 import color from 'picocolors';
 
-async function getWorktrees(): Promise<Worktree[]> {
-	const { stdout } = await execa('git', ['worktree', 'list']);
-	const worktrees = stdout.split('\n').map((line) => {
-		const [path] = line.split(' ');
-		return {
-			value: path,
-			label: path,
-		};
-	});
+interface Worktree {
+	ref: string;
+	commit: string;
+	path: string;
+}
 
-	if (
-		!worktrees.every(
-			(wt): wt is { label: string; value: string } => !!wt.label && !!wt.value,
-		)
-	) {
-		console.log('Invalid value');
-		process.exit(1);
+async function getWorktrees(): Promise<Worktree[]> {
+	const { stdout } = await execa('git', [
+		'worktree',
+		'list',
+		'--porcelain',
+		'-z', // NUL separated
+	]);
+
+	const worktrees: Worktree[] = [];
+	const lines = stdout.split('\0');
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+
+		if (line && line.startsWith('worktree ')) {
+			const path = line.split(' ')[1];
+			const commit = lines[++i]?.split(' ')[1];
+			const ref = lines[++i]?.split(' ')[1];
+
+			worktrees.push({ path, ref, commit });
+		}
 	}
 
 	return worktrees;
@@ -44,7 +54,11 @@ async function switchWorktree() {
 
 	const selectedWorktree = await select({
 		message: '',
-		options: worktrees,
+		options: worktrees.map((w) => ({
+			label: w.ref.split('/')[2],
+			value: w.path,
+			hint: w.path,
+		})),
 	});
 
 	if (isCancel(selectedWorktree)) {
@@ -58,8 +72,3 @@ async function switchWorktree() {
 }
 
 await switchWorktree();
-
-type Worktree = {
-	label: string;
-	value: string;
-};
