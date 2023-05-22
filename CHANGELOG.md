@@ -1,5 +1,15 @@
 # worktree-welder
 
+## 1.1.0
+
+### Minor Changes
+
+- c8e5754: feat: preserve location within repo (subdirectory)
+
+### Patch Changes
+
+- ceae759: update deps
+
 ## 1.0.2
 
 ### Patch Changes
