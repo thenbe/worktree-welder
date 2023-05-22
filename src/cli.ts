@@ -1,27 +1,60 @@
 import { cancel, intro, isCancel, outro, select } from '@clack/prompts';
 import { execa } from 'execa';
+import path from 'node:path';
 import color from 'picocolors';
 
-async function getWorktrees(): Promise<Worktree[]> {
-	const { stdout } = await execa('git', ['worktree', 'list']);
-	const worktrees = stdout.split('\n').map((line) => {
-		const [path] = line.split(' ');
-		return {
-			value: path,
-			label: path,
-		};
-	});
+interface Worktree {
+	ref: string;
+	commit: string;
+	path: string;
+}
 
-	if (
-		!worktrees.every(
-			(wt): wt is { label: string; value: string } => !!wt.label && !!wt.value,
-		)
-	) {
-		console.log('Invalid value');
-		process.exit(1);
+async function getWorktrees(): Promise<Worktree[]> {
+	const { stdout } = await execa('git', [
+		'worktree',
+		'list',
+		'--porcelain',
+		'-z', // NUL separated
+	]);
+
+	const worktrees: Worktree[] = [];
+	const lines = stdout.split('\0');
+
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+
+		if (line && line.startsWith('worktree ')) {
+			const path = line.split(' ')[1];
+			const commit = lines[++i]?.split(' ')[1];
+			const ref = lines[++i]?.split(' ')[1];
+
+			if (!path || !commit || !ref) {
+				throw new Error('Could not parse worktree');
+			}
+
+			worktrees.push({ path, ref, commit });
+		}
 	}
 
 	return worktrees;
+}
+
+async function getOptions(worktrees: Worktree[]) {
+	/** Path relative to the repo root */
+	const { stdout: pathWithinRepo } = await execa('git', [
+		'rev-parse',
+		'--show-prefix',
+	]);
+
+	return worktrees.map((w) => {
+		// preserve the current path within the repo when switching worktrees
+		const matchingPath = path.join(w.path, pathWithinRepo);
+		return {
+			label: w.ref.split('/')[2] ?? '',
+			value: matchingPath,
+			hint: matchingPath,
+		};
+	});
 }
 
 async function switchWorktree() {
@@ -42,24 +75,18 @@ async function switchWorktree() {
 		process.exit(1);
 	}
 
-	const selectedWorktree = await select({
+	const selection: string | symbol = await select({
 		message: '',
-		options: worktrees,
+		options: await getOptions(worktrees),
 	});
 
-	if (isCancel(selectedWorktree)) {
+	if (isCancel(selection)) {
 		cancel('Operation cancelled.');
 		process.exit(1);
 	}
 
-	const wt = selectedWorktree;
-	await execa('echo', [wt]).pipeStdout?.('/tmp/worktree-welder');
+	await execa('echo', [selection]).pipeStdout?.('/tmp/worktree-welder');
 	outro(color.green('Success'));
 }
 
 await switchWorktree();
-
-type Worktree = {
-	label: string;
-	value: string;
-};
