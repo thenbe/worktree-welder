@@ -1,5 +1,11 @@
 # worktree-welder
 
+## 1.1.1
+
+### Patch Changes
+
+- dc8cd97: Fix error: ERR_MODULE_NOT_FOUND
+
 ## 1.1.0
 
 ### Minor Changes
