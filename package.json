@@ -3,6 +3,10 @@
 	"version": "1.1.0",
 	"description": "Utility for git worktrees",
 	"bin": "./cli.mjs",
+	"files": [
+		"dist",
+		"*.mjs"
+	],
 	"type": "module",
 	"scripts": {
 		"build": "tsup",
