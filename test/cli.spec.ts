@@ -52,5 +52,46 @@ describe('cli.ts', () => {
 		]);
 	});
 
-	// TODO: Add more tests for switchWorktree and other functions as needed
+	test('switchWorktree should switch to the selected worktree', async () => {
+		const execaMock = vi.mocked(execa);
+		execaMock.mockResolvedValueOnce({ stdout: '' }); // getWorktrees
+		execaMock.mockResolvedValueOnce({ stdout: '' }); // getOptions
+		execaMock.mockResolvedValueOnce({}); // switchWorktree
+
+		await switchWorktree();
+
+		expect(execaMock).toHaveBeenCalledWith('echo', ['/mock/path/1']);
+		expect(execaMock).toHaveBeenCalledWith('echo', ['/mock/path/2']);
+	});
+
+	test('switchWorktree should handle no other worktrees', async () => {
+		const execaMock = vi.mocked(execa);
+		execaMock.mockResolvedValueOnce({ stdout: '' }); // getWorktrees
+
+		await expect(switchWorktree()).rejects.toThrow('No other worktrees found.');
+
+		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
+	});
+
+	test('switchWorktree should handle user cancel', async () => {
+		const execaMock = vi.mocked(execa);
+		execaMock.mockResolvedValueOnce({ stdout: '' }); // getWorktrees
+		execaMock.mockResolvedValueOnce({ stdout: '' }); // getOptions
+
+		const selectMock = jest.spyOn(select, 'default');
+		selectMock.mockResolvedValueOnce(Symbol.for('cancel'));
+
+		await expect(switchWorktree()).rejects.toThrow('Operation cancelled.');
+
+		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
+	});
+
+	test('switchWorktree should handle error when fetching worktrees', async () => {
+		const execaMock = vi.mocked(execa);
+		execaMock.mockRejectedValueOnce(new Error('Error getting worktrees.'));
+
+		await expect(switchWorktree()).rejects.toThrow('Error getting worktrees. Make sure you are in a git repo.');
+
+		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
+	});
 });
