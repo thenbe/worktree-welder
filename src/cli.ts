@@ -3,13 +3,13 @@ import { execa } from 'execa';
 import path from 'node:path';
 import color from 'picocolors';
 
-interface Worktree {
+export interface Worktree {
 	ref: string;
 	commit: string;
 	path: string;
 }
 
-async function getWorktrees(): Promise<Worktree[]> {
+export async function getWorktrees(): Promise<Worktree[]> {
 	const { stdout } = await execa('git', [
 		'worktree',
 		'list',
@@ -39,7 +39,7 @@ async function getWorktrees(): Promise<Worktree[]> {
 	return worktrees;
 }
 
-async function getOptions(worktrees: Worktree[]) {
+export async function getOptions(worktrees: Worktree[]) {
 	/** Path relative to the repo root */
 	const { stdout: pathWithinRepo } = await execa('git', [
 		'rev-parse',
@@ -57,7 +57,7 @@ async function getOptions(worktrees: Worktree[]) {
 	});
 }
 
-async function switchWorktree() {
+export async function switchWorktree() {
 	intro('Worktree Welder');
 
 	let worktrees: Worktree[];
@@ -88,5 +88,3 @@ async function switchWorktree() {
 	await execa('echo', [selection]).pipeStdout?.('/tmp/worktree-welder');
 	outro(color.green('Success'));
 }
-
-await switchWorktree();

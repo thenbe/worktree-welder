@@ -13,6 +13,8 @@
 		"dev": "tsup --watch",
 		"start": "node cli.mjs",
 		"check": "tsc --noEmit",
+		"test": "vitest --run",
+		"test:watch": "vitest",
 		"release": "pnpm run build && changeset publish"
 	},
 	"dependencies": {
@@ -27,7 +29,8 @@
 		"@tsconfig/strictest": "2.0.1",
 		"@types/node": "20.2.1",
 		"tsup": "6.7.0",
-		"typescript": "5.0.4"
+		"typescript": "5.0.4",
+		"vitest": "0.31.4"
 	},
 	"homepage": "https://github.com/thenbe/worktree-welder#readme",
 	"repository": {
