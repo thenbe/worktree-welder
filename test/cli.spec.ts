@@ -1,6 +1,7 @@
 import { execa } from 'execa';
 import { describe, expect, test, vi } from 'vitest';
-import { Worktree, getOptions, getWorktrees } from '../src/cli';
+import { Worktree, getOptions, getWorktrees, switchWorktree } from '../src/cli';
+import { select } from '@clack/prompts';
 
 vi.mock('execa');
 
@@ -58,7 +59,7 @@ describe('cli.ts', () => {
 		execaMock.mockResolvedValueOnce({ stdout: '' }); // getOptions
 		execaMock.mockResolvedValueOnce({}); // switchWorktree
 
-		await switchWorktree();
+		await switchWorktree(() => {});
 
 		expect(execaMock).toHaveBeenCalledWith('echo', ['/mock/path/1']);
 		expect(execaMock).toHaveBeenCalledWith('echo', ['/mock/path/2']);
@@ -68,7 +69,9 @@ describe('cli.ts', () => {
 		const execaMock = vi.mocked(execa);
 		execaMock.mockResolvedValueOnce({ stdout: '' }); // getWorktrees
 
-		await expect(switchWorktree()).rejects.toThrow('No other worktrees found.');
+		await expect(switchWorktree(() => {})).rejects.toThrow(
+			'No other worktrees found.',
+		);
 
 		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
 	});
@@ -78,10 +81,12 @@ describe('cli.ts', () => {
 		execaMock.mockResolvedValueOnce({ stdout: '' }); // getWorktrees
 		execaMock.mockResolvedValueOnce({ stdout: '' }); // getOptions
 
-		const selectMock = jest.spyOn(select, 'default');
+		const selectMock = vi.spyOn(select, 'default');
 		selectMock.mockResolvedValueOnce(Symbol.for('cancel'));
 
-		await expect(switchWorktree()).rejects.toThrow('Operation cancelled.');
+		await expect(switchWorktree(() => {})).rejects.toThrow(
+			'Operation cancelled.',
+		);
 
 		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
 	});
@@ -90,7 +95,9 @@ describe('cli.ts', () => {
 		const execaMock = vi.mocked(execa);
 		execaMock.mockRejectedValueOnce(new Error('Error getting worktrees.'));
 
-		await expect(switchWorktree()).rejects.toThrow('Error getting worktrees. Make sure you are in a git repo.');
+		await expect(switchWorktree(() => {})).rejects.toThrow(
+			'Error getting worktrees. Make sure you are in a git repo.',
+		);
 
 		expect(execaMock).not.toHaveBeenCalledWith('echo', expect.anything());
 	});

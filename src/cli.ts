@@ -57,7 +57,11 @@ export async function getOptions(worktrees: Worktree[]) {
 	});
 }
 
-export async function switchWorktree() {
+export function handleErrorAndExit(message: string) {
+	process.exit(1);
+}
+
+export async function switchWorktree(handleError = handleErrorAndExit) {
 	intro('Worktree Welder');
 
 	let worktrees: Worktree[];
@@ -71,8 +75,7 @@ export async function switchWorktree() {
 	}
 
 	if (worktrees.length < 2) {
-		console.log(color.yellow('No other worktrees found.'));
-		process.exit(1);
+		handleError('No other worktrees found.');
 	}
 
 	const selection: string | symbol = await select({
@@ -81,8 +84,7 @@ export async function switchWorktree() {
 	});
 
 	if (isCancel(selection)) {
-		cancel('Operation cancelled.');
-		process.exit(1);
+		handleError('Operation cancelled.');
 	}
 
 	await execa('echo', [selection]).pipeStdout?.('/tmp/worktree-welder');
