@@ -1,4 +1,5 @@
 import { cancel, intro, isCancel, outro, select } from '@clack/prompts';
+import { cac } from 'cac';
 import { execa } from 'execa';
 import path from 'node:path';
 import color from 'picocolors';
@@ -89,4 +90,18 @@ async function switchWorktree() {
 	outro(color.green('Success'));
 }
 
-await switchWorktree();
+function run() {
+	const cli = cac('worktree-welder');
+
+	cli
+		.command('', 'Switch to another worktree')
+		.option('--sort [key]', 'Sort method', {
+			default: 'name',
+		})
+		.action(switchWorktree);
+
+	cli.help();
+	cli.parse();
+}
+
+run();
